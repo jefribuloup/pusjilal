@@ -1,0 +1,56 @@
+{# Navbar — padanan Next.js: components/Navbar.tsx
+   Input: nav (daftar (label, endpoint)), site, is_admin, request.endpoint #}
+{% set current = {'berita_detail': 'berita', 'pendaftaran_form': 'pendaftaran'}.get(request.endpoint, request.endpoint) %}
+<header class="sticky top-0 z-40 border-b border-stone-200 bg-white/95 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+    <a href="{{ url_for('index') }}" class="flex items-center gap-3">
+      <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-700 text-lg font-bold text-white" aria-hidden="true">P</span>
+      <span class="leading-tight">
+        <span class="block text-base font-bold text-brand-800">{{ site.name }}</span>
+        <span class="hidden text-xs text-slate-500 sm:block">{{ site.full_name }}</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Navigasi utama">
+      {% for label, endpoint in nav %}
+      <a href="{{ url_for(endpoint) }}"
+         class="rounded-md px-3 py-2 text-sm font-medium {% if current == endpoint %}bg-brand-50 text-brand-700{% else %}text-slate-600 hover:bg-stone-100 hover:text-brand-700{% endif %}"
+         {% if current == endpoint %}aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+      {% if is_admin %}
+      <a href="{{ url_for('admin_dashboard') }}" class="ml-2 rounded-md bg-brand-700 px-3 py-2 text-sm font-medium text-white hover:bg-brand-800">Admin</a>
+      {% endif %}
+    </nav>
+
+    <button id="menu-btn" type="button" aria-expanded="false" aria-controls="menu-mobile" aria-label="Buka menu"
+            class="inline-flex h-10 w-10 items-center justify-center rounded-md text-slate-700 hover:bg-stone-100 lg:hidden">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/>
+      </svg>
+    </button>
+  </div>
+
+  <nav id="menu-mobile" class="hidden border-t border-stone-200 bg-white px-4 py-2 lg:hidden" aria-label="Navigasi seluler">
+    {% for label, endpoint in nav %}
+    <a href="{{ url_for(endpoint) }}"
+       class="block rounded-md px-3 py-2.5 text-sm font-medium {% if current == endpoint %}bg-brand-50 text-brand-700{% else %}text-slate-700 hover:bg-stone-100{% endif %}"
+       {% if current == endpoint %}aria-current="page"{% endif %}>{{ label }}</a>
+    {% endfor %}
+    {% if is_admin %}
+    <a href="{{ url_for('admin_dashboard') }}" class="mt-1 block rounded-md bg-brand-700 px-3 py-2.5 text-sm font-medium text-white">Admin</a>
+    {% endif %}
+  </nav>
+</header>
+
+<script>
+  (function () {
+    var btn = document.getElementById('menu-btn');
+    var menu = document.getElementById('menu-mobile');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', function () {
+      var open = menu.classList.toggle('hidden') === false;
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+    });
+  })();
+</script>

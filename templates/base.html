@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site.name }} — {{ site.full_name }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.full_name }}: {{ site.tagline }}.{% endblock %}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%231f5c4a'/%3E%3Ctext x='16' y='22' font-size='18' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
+
+  {# Prototype: Tailwind via CDN (butuh internet). Produksi/Next.js: pakai Tailwind build dengan token yang sama. #}
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6f3', 100: '#d6eae3', 200: '#b0d5c7', 500: '#2f8267',
+              600: '#27705a', 700: '#1f5c4a', 800: '#184a3c', 900: '#12382d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col bg-stone-50 text-slate-800 antialiased">
+  <a href="#konten" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-brand-700">Lewati ke konten</a>
+
+  {% block nav %}{% include 'components/navbar.html' %}{% endblock %}
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mx-auto w-full max-w-6xl space-y-2 px-4 pt-4" role="status">
+      {% for category, message in messages %}
+      <div class="rounded-lg border px-4 py-3 text-sm {% if category == 'success' %}border-green-200 bg-green-50 text-green-800{% else %}border-red-200 bg-red-50 text-red-800{% endif %}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+
+  <main id="konten" class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}{% include 'components/footer.html' %}{% endblock %}
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,66 @@
+{# Arsip jurnal — padanan Next.js: app/jurnal/page.tsx
+   Input: issues (edisi, terbaru dulu): id, volume, number, year, period, articles[title, authors[], abstract, pdf]
+   pdf = path dari root situs, mis. 'static/uploads/nama.pdf' (kosong = tanpa unduhan) #}
+{% extends 'base.html' %}
+{% block title %}Arsip Jurnal — {{ site.name }}{% endblock %}
+{% block description %}Arsip terbitan jurnal {{ site.full_name }}: volume, nomor, dan artikel.{% endblock %}
+
+{% block content %}
+<section class="border-b border-stone-200 bg-white">
+  <div class="mx-auto max-w-6xl px-4 py-10">
+    <p class="text-sm font-medium text-brand-600">Publikasi Ilmiah</p>
+    <h1 class="mt-1 text-3xl font-bold text-slate-900">Arsip Jurnal</h1>
+    <p class="mt-3 max-w-2xl text-slate-600">Daftar terbitan beserta artikel yang dapat diunduh.</p>
+
+    {% if issues %}
+    <nav class="mt-6 flex flex-wrap gap-2" aria-label="Lompat ke edisi">
+      {% for issue in issues %}
+      <a href="#vol{{ issue.volume }}-no{{ issue.number }}"
+         class="rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-700 hover:bg-brand-100">
+        Vol. {{ issue.volume }} No. {{ issue.number }} ({{ issue.year }})
+      </a>
+      {% endfor %}
+    </nav>
+    {% endif %}
+  </div>
+</section>
+
+<div class="mx-auto max-w-6xl space-y-12 px-4 py-12">
+  {% if issues %}
+    {% for issue in issues %}
+    <section id="vol{{ issue.volume }}-no{{ issue.number }}" class="scroll-mt-24">
+      <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-stone-200 pb-3">
+        <h2 class="text-2xl font-bold text-slate-900">Volume {{ issue.volume }}, Nomor {{ issue.number }}</h2>
+        <p class="text-sm text-slate-500">{{ issue.period }} &middot; {{ issue.articles|length }} artikel</p>
+      </div>
+
+      {% if issue.articles %}
+      <ul class="mt-5 space-y-4">
+        {% for a in issue.articles %}
+        <li class="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+          <h3 class="text-lg font-semibold leading-snug text-slate-900">{{ a.title }}</h3>
+          <p class="mt-1 text-sm font-medium text-brand-700">{{ a.authors|join(', ') }}</p>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600">{{ a.abstract }}</p>
+          {% if a.pdf %}
+          <a href="/{{ a.pdf }}" download
+             class="mt-4 inline-flex items-center gap-2 rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v10m0 0l-4-4m4 4l4-4M5 19h14"/></svg>
+            Unduh PDF
+          </a>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="mt-5 rounded-lg border border-dashed border-stone-300 bg-white p-5 text-sm text-slate-600">Belum ada artikel pada edisi ini.</p>
+      {% endif %}
+    </section>
+    {% endfor %}
+  {% else %}
+  <div class="rounded-xl border border-dashed border-stone-300 bg-white p-10 text-center">
+    <p class="font-semibold text-slate-800">Belum ada terbitan</p>
+    <p class="mt-1 text-sm text-slate-600">Terbitan jurnal akan tampil di sini setelah diunggah oleh admin.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

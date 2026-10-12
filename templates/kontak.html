@@ -1,0 +1,53 @@
+{# Kontak — padanan Next.js: app/kontak/page.tsx
+   Input: site (address, phone, email dari .env: CONTACT_ADDRESS, CONTACT_PHONE, CONTACT_EMAIL) #}
+{% extends 'base.html' %}
+{% block title %}Kontak — {{ site.name }}{% endblock %}
+{% block description %}Hubungi {{ site.full_name }}.{% endblock %}
+
+{% block content %}
+<section class="border-b border-stone-200 bg-white">
+  <div class="mx-auto max-w-6xl px-4 py-10">
+    <p class="text-sm font-medium text-brand-600">Hubungi Kami</p>
+    <h1 class="mt-1 text-3xl font-bold text-slate-900">Kontak</h1>
+    <p class="mt-3 max-w-2xl text-slate-600">Silakan hubungi {{ site.name }} untuk pertanyaan seputar layanan, pelatihan, dan kegiatan.</p>
+  </div>
+</section>
+
+<div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 lg:grid-cols-3">
+
+  <div class="space-y-4 lg:col-span-2">
+    {% if site.address or site.phone or site.email %}
+      {% if site.address %}
+      <div class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-600">Alamat</h2>
+        <p class="mt-2 text-slate-800">{{ site.address }}</p>
+      </div>
+      {% endif %}
+      {% if site.phone %}
+      <div class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-600">Telepon / WhatsApp</h2>
+        <p class="mt-2"><a href="tel:{{ site.phone }}" class="text-slate-800 hover:text-brand-700">{{ site.phone }}</a></p>
+      </div>
+      {% endif %}
+      {% if site.email %}
+      <div class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-600">Email</h2>
+        <p class="mt-2"><a href="mailto:{{ site.email }}" class="text-slate-800 hover:text-brand-700">{{ site.email }}</a></p>
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="rounded-xl border border-dashed border-stone-300 bg-white p-8 text-center">
+        <p class="font-semibold text-slate-800">Informasi kontak akan segera tersedia</p>
+        <p class="mt-1 text-sm text-slate-600">Sementara itu, Anda dapat melihat layanan dan program pendaftaran kami.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <aside class="h-fit rounded-xl bg-brand-50 p-6">
+    <h2 class="text-lg font-bold text-slate-900">Ingin mendaftar kegiatan?</h2>
+    <p class="mt-2 text-sm leading-relaxed text-slate-600">Pendaftaran pelatihan dapat dilakukan langsung secara daring melalui website ini.</p>
+    <a href="{{ url_for('pendaftaran') }}" class="mt-4 inline-block rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">Buka Pendaftaran</a>
+    <a href="{{ url_for('layanan') }}" class="mt-3 block text-sm font-medium text-brand-700 hover:text-brand-800">Lihat layanan &rarr;</a>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Halaman tidak ditemukan - {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Halaman tidak ditemukan</h1>
+    <p class="muted">
+      Alamat yang Anda buka tidak ada atau sudah dipindahkan.
+      Periksa kembali penulisan alamatnya, atau mulai dari halaman berikut.
+    </p>
+    <p>
+      <a class="btn" href="{{ url_for('index') }}">Kembali ke beranda</a>
+      <a class="btn btn-outline" href="{{ url_for('berita') }}">Lihat berita</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

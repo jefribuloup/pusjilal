@@ -1,0 +1,172 @@
+{
+  "news": [
+    {
+      "id": "1",
+      "slug": "pendaftaran-pelatihan-penyelia-halal-dibuka",
+      "title": "Pendaftaran Pelatihan Penyelia Halal Dibuka",
+      "excerpt": "Pusjilal membuka pendaftaran pelatihan Penyelia Halal bagi pelaku usaha dan calon penyelia halal.",
+      "body_html": "<p>Pusjilal membuka pendaftaran pelatihan Penyelia Halal bagi pelaku usaha, pengelola usaha pangan, dan calon penyelia halal.</p><p>Peserta akan mempelajari dasar-dasar sistem jaminan produk halal, penelusuran bahan, dan penerapan prosedur di lingkungan produksi. Pendaftaran dilakukan melalui halaman Pendaftaran di website ini.</p><p>Informasi jadwal dan persyaratan akan disampaikan kepada peserta setelah pendaftaran diverifikasi oleh panitia.</p>",
+      "published_at": "2026-10-05T08:00:00Z",
+      "status": "published"
+    },
+    {
+      "id": "2",
+      "slug": "sosialisasi-sertifikasi-halal-bagi-pelaku-usaha",
+      "title": "Sosialisasi Sertifikasi Halal bagi Pelaku Usaha Mikro dan Kecil",
+      "excerpt": "Sosialisasi umum tentang manfaat dan tahapan sertifikasi halal untuk pelaku usaha mikro dan kecil.",
+      "body_html": "<p>Kegiatan sosialisasi ini memberikan gambaran umum tentang manfaat sertifikasi halal dan tahapan yang perlu dipersiapkan oleh pelaku usaha mikro dan kecil.</p><p>Materi mencakup persiapan dokumen, pemahaman alur pengajuan, dan peran pendamping dalam proses sertifikasi.</p>",
+      "published_at": "2026-09-22T09:00:00Z",
+      "status": "published"
+    },
+    {
+      "id": "3",
+      "slug": "pelatihan-juru-sembelih-halal-standar-dan-praktik",
+      "title": "Pelatihan Juru Sembelih Halal: Standar dan Praktik",
+      "excerpt": "Pelatihan bagi juru sembelih mengenai standar penyembelihan halal dan praktik di lapangan.",
+      "body_html": "<p>Pelatihan Juru Sembelih Halal membekali peserta dengan pemahaman standar penyembelihan halal serta praktik yang baik di lapangan.</p><p>Peserta mendapatkan materi teori dan simulasi praktik yang dipandu oleh instruktur.</p>",
+      "published_at": "2026-09-10T10:30:00Z",
+      "status": "published"
+    },
+    {
+      "id": "4",
+      "slug": "rencana-kajian-dan-advokasi-halal-2027",
+      "title": "Rencana Kajian dan Advokasi Halal 2027",
+      "excerpt": "Draf rencana program kajian dan advokasi untuk tahun mendatang.",
+      "body_html": "<p>Draf rencana program kajian dan advokasi halal untuk tahun mendatang. Konten ini masih dalam penyusunan.</p>",
+      "published_at": "2026-10-08T07:00:00Z",
+      "status": "draft"
+    }
+  ],
+  "programs": [
+    {
+      "id": "1",
+      "slug": "penyelia-halal",
+      "name": "Pelatihan Penyelia Halal",
+      "description": "Pelatihan bagi pelaku usaha dan calon penyelia halal: dasar sistem jaminan produk halal, penelusuran bahan, dan penerapan prosedur produksi.",
+      "quota": 30,
+      "is_open": true
+    },
+    {
+      "id": "2",
+      "slug": "juru-sembelih-halal",
+      "name": "Pelatihan Juru Sembelih Halal",
+      "description": "Pelatihan standar dan praktik penyembelihan halal bagi juru sembelih, termasuk teori dan simulasi praktik.",
+      "quota": 25,
+      "is_open": true
+    },
+    {
+      "id": "3",
+      "slug": "pendamping-proses-produk-halal",
+      "name": "Pelatihan Pendamping Proses Produk Halal",
+      "description": "Pelatihan bagi calon pendamping proses produk halal. Pendaftaran gelombang ini sudah ditutup.",
+      "quota": 20,
+      "is_open": false
+    }
+  ],
+  "registrations": [
+    {
+      "id": "1",
+      "program_id": "1",
+      "full_name": "Andi Pratama",
+      "email": "andi.pratama@example.com",
+      "phone": "081234567801",
+      "status": "diverifikasi",
+      "created_at": "2026-10-06T02:15:00Z"
+    },
+    {
+      "id": "2",
+      "program_id": "1",
+      "full_name": "Siti Rahmawati",
+      "email": "siti.rahmawati@example.com",
+      "phone": "081234567802",
+      "status": "menunggu",
+      "created_at": "2026-10-07T04:40:00Z"
+    },
+    {
+      "id": "3",
+      "program_id": "1",
+      "full_name": "Budi Santoso",
+      "email": "budi.santoso@example.com",
+      "phone": "081234567803",
+      "status": "ditolak",
+      "created_at": "2026-10-07T09:05:00Z"
+    },
+    {
+      "id": "4",
+      "program_id": "2",
+      "full_name": "Muh. Fadli",
+      "email": "muh.fadli@example.com",
+      "phone": "081234567804",
+      "status": "menunggu",
+      "created_at": "2026-10-08T01:20:00Z"
+    },
+    {
+      "id": "5",
+      "program_id": "2",
+      "full_name": "Nur Aisyah",
+      "email": "nur.aisyah@example.com",
+      "phone": "081234567805",
+      "status": "diverifikasi",
+      "created_at": "2026-10-08T06:50:00Z"
+    },
+    {
+      "id": "6",
+      "program_id": "3",
+      "full_name": "Rizky Hidayat",
+      "email": "rizky.hidayat@example.com",
+      "phone": "081234567806",
+      "status": "diverifikasi",
+      "created_at": "2026-09-15T03:30:00Z"
+    }
+  ],
+  "journal_issues": [
+    {
+      "id": "1",
+      "volume": 1,
+      "number": 1,
+      "year": 2026,
+      "period": "Januari–Juni 2026",
+      "articles": [
+        {
+          "title": "Tinjauan Konsep Penyelia Halal dalam Rantai Produksi Usaha Mikro dan Kecil",
+          "authors": ["Penulis Contoh A", "Penulis Contoh B"],
+          "abstract": "Artikel ini meninjau peran penyelia halal dalam menjaga konsistensi proses produksi pada usaha mikro dan kecil. Pembahasan mencakup tanggung jawab, kompetensi, dan tantangan penerapan di lapangan.",
+          "pdf": "static/uploads/contoh-artikel.pdf"
+        },
+        {
+          "title": "Kesiapan Pelaku Usaha Kecil terhadap Kewajiban Sertifikasi Halal: Kajian Awal",
+          "authors": ["Penulis Contoh C"],
+          "abstract": "Kajian awal ini memotret tingkat kesiapan pelaku usaha kecil dalam menyiapkan dokumen dan proses sertifikasi halal, serta faktor yang memengaruhinya.",
+          "pdf": "static/uploads/contoh-artikel.pdf"
+        },
+        {
+          "title": "Praktik Penyembelihan Halal: Tinjauan Aspek Syariah dan Kesejahteraan Hewan",
+          "authors": ["Penulis Contoh D", "Penulis Contoh E"],
+          "abstract": "Tulisan ini membahas praktik penyembelihan halal dengan menelaah aspek syariah dan prinsip kesejahteraan hewan sebagai bahan rujukan bagi juru sembelih.",
+          "pdf": "static/uploads/contoh-artikel.pdf"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "volume": 1,
+      "number": 2,
+      "year": 2026,
+      "period": "Juli–Desember 2026",
+      "articles": [
+        {
+          "title": "Peran Advokasi dalam Penguatan Ekosistem Halal Daerah",
+          "authors": ["Penulis Contoh F"],
+          "abstract": "Artikel ini membahas peran advokasi dalam memperkuat ekosistem halal di tingkat daerah, termasuk koordinasi antar pemangku kepentingan.",
+          "pdf": "static/uploads/contoh-artikel.pdf"
+        },
+        {
+          "title": "Literasi Halal pada Konsumen Muda: Studi Eksploratif",
+          "authors": ["Penulis Contoh G", "Penulis Contoh H"],
+          "abstract": "Studi eksploratif ini menelaah tingkat literasi halal pada konsumen muda dan sumber informasi yang mereka gunakan.",
+          "pdf": "static/uploads/contoh-artikel.pdf"
+        }
+      ]
+    }
+  ]
+}

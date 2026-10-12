@@ -1,0 +1,89 @@
+{# Profil — padanan Next.js: app/profil/page.tsx
+   CATATAN: teks Visi, Misi, dan Unit di bawah bersifat umum. GANTI dengan teks resmi Pusjilal. #}
+{% extends 'base.html' %}
+{% block title %}Profil — {{ site.name }}{% endblock %}
+{% block description %}Profil {{ site.full_name }}: tentang lembaga, visi, misi, dan unit layanan.{% endblock %}
+
+{% block content %}
+<section class="border-b border-stone-200 bg-white">
+  <div class="mx-auto max-w-6xl px-4 py-10">
+    <p class="text-sm font-medium text-brand-600">Tentang Kami</p>
+    <h1 class="mt-1 text-3xl font-bold text-slate-900">Profil {{ site.name }}</h1>
+    <p class="mt-3 max-w-2xl text-slate-600">{{ site.full_name }} bergerak di bidang kajian, advokasi, dan layanan halal.</p>
+  </div>
+</section>
+
+<div class="mx-auto max-w-6xl space-y-14 px-4 py-12">
+
+  {# Tentang #}
+  <section class="grid gap-8 md:grid-cols-3">
+    <div class="md:col-span-1">
+      <h2 class="text-2xl font-bold text-slate-900">Tentang Lembaga</h2>
+    </div>
+    <div class="space-y-4 text-slate-700 leading-relaxed md:col-span-2">
+      <p>{{ site.full_name }} ({{ site.name }}) menjalankan kajian dan advokasi di bidang halal serta menyediakan layanan yang mendukung penerapan jaminan produk halal, termasuk pemeriksaan halal dan pelatihan.</p>
+      <p>Melalui website ini, {{ site.name }} menyampaikan informasi kegiatan, membuka pendaftaran pelatihan secara daring, dan menerbitkan hasil kajian dalam bentuk jurnal.</p>
+    </div>
+  </section>
+
+  {# Visi #}
+  <section class="rounded-2xl bg-brand-800 p-8 text-white sm:p-10">
+    <p class="text-xs font-semibold uppercase tracking-widest text-brand-200">Visi</p>
+    <p class="mt-3 max-w-3xl text-xl font-semibold leading-snug sm:text-2xl">
+      Menjadi lembaga rujukan dalam kajian, advokasi, dan layanan halal yang terpercaya.
+    </p>
+  </section>
+
+  {# Misi #}
+  <section class="grid gap-8 md:grid-cols-3">
+    <div class="md:col-span-1">
+      <h2 class="text-2xl font-bold text-slate-900">Misi</h2>
+    </div>
+    <ol class="space-y-3 md:col-span-2">
+      {% for misi in [
+        'Menyelenggarakan kajian dan publikasi ilmiah di bidang halal.',
+        'Melakukan advokasi untuk penguatan ekosistem halal.',
+        'Menyediakan layanan pemeriksaan halal yang profesional dan akuntabel.',
+        'Menyelenggarakan pelatihan untuk meningkatkan kompetensi pelaku dan tenaga halal.',
+        'Memberikan edukasi dan informasi halal yang mudah diakses masyarakat.'
+      ] %}
+      <li class="flex gap-3 rounded-lg border border-stone-200 bg-white p-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">{{ loop.index }}</span>
+        <span class="text-slate-700">{{ misi }}</span>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  {# Unit layanan #}
+  <section>
+    <h2 class="text-2xl font-bold text-slate-900">Unit dan Bidang Layanan</h2>
+    <div class="mt-6 grid gap-5 md:grid-cols-3">
+      <div class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-brand-800">Lembaga Pemeriksa Halal</h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">Pemeriksaan kehalalan produk sebagai bagian dari proses sertifikasi halal.</p>
+      </div>
+      <div class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-brand-800">Pelatihan</h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">Pelatihan penyelia halal, juru sembelih halal, dan pendamping proses produk halal.</p>
+      </div>
+      <div class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-brand-800">Kajian dan Advokasi</h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">Kajian ilmiah, publikasi jurnal, dan advokasi di bidang halal.</p>
+      </div>
+    </div>
+  </section>
+
+  {# Ajakan #}
+  <section class="flex flex-col items-start justify-between gap-4 rounded-2xl border border-brand-100 bg-brand-50 p-6 sm:flex-row sm:items-center sm:p-8">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900">Ingin tahu layanan kami lebih jauh?</h2>
+      <p class="mt-1 text-sm text-slate-600">Lihat rincian layanan atau hubungi kami langsung.</p>
+    </div>
+    <div class="flex gap-3">
+      <a href="{{ url_for('layanan') }}" class="rounded-lg bg-brand-700 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-800">Lihat Layanan</a>
+      <a href="{{ url_for('kontak') }}" class="rounded-lg border border-brand-200 bg-white px-5 py-3 text-sm font-semibold text-brand-700 hover:bg-brand-50">Kontak</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

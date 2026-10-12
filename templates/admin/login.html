@@ -1,0 +1,45 @@
+{# Login admin — padanan Next.js: app/admin/login/page.tsx
+   Input: error (teks atau None). Query ?next= dipertahankan untuk redirect setelah login. #}
+{% extends 'base.html' %}
+{% block title %}Login Admin — {{ site.name }}{% endblock %}
+
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen items-center justify-center bg-brand-50 px-4 py-10">
+  <div class="w-full max-w-sm">
+    <div class="mb-6 text-center">
+      <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-2xl font-bold text-white" aria-hidden="true">P</span>
+      <h1 class="mt-4 text-2xl font-bold text-slate-900">Login Admin</h1>
+      <p class="mt-1 text-sm text-slate-600">{{ site.full_name }}</p>
+    </div>
+
+    <form method="post" action="{{ url_for('admin_login', next=request.args.get('next')) }}"
+          class="space-y-5 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+
+      {% if error %}
+      <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">{{ error }}</div>
+      {% endif %}
+
+      <div>
+        <label for="username" class="block text-sm font-medium text-slate-800">Username</label>
+        <input id="username" name="username" type="text" required autofocus autocomplete="username"
+               class="mt-1 block w-full rounded-lg border border-stone-300 px-3 py-2.5 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-slate-800">Password</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password"
+               class="mt-1 block w-full rounded-lg border border-stone-300 px-3 py-2.5 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+      </div>
+
+      <button type="submit" class="w-full rounded-lg bg-brand-700 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-200">Masuk</button>
+    </form>
+
+    <p class="mt-5 text-center text-sm">
+      <a href="{{ url_for('index') }}" class="font-medium text-brand-700 hover:text-brand-800">&larr; Kembali ke website</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

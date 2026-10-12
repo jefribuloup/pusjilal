@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terjadi kesalahan - Pusjilal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1>Terjadi kesalahan pada server</h1>
+        <p class="muted">
+          Maaf, halaman ini sedang bermasalah. Kami sudah mencatat kesalahannya.
+          Silakan coba lagi beberapa saat lagi.
+        </p>
+        <p>
+          <a class="btn" href="{{ url_for('index') }}">Kembali ke beranda</a>
+        </p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

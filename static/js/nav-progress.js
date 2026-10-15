@@ -26,8 +26,8 @@
   // var BAR_LIGHT = '#fcd34d';                  // warna kilau
   var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
-  var LOADER_SIZE = 125;                       // px, ukuran lingkaran di tengah layar
-  var LOADER_LETTER = 'PUSJILAL';                    // huruf di tengah lingkaran
+  var LOADER_SIZE = 112;                      // px, ukuran lingkaran di tengah layar
+  var LOADER_LETTER = 'pusjilal';             // teks di tengah lingkaran (boleh 1 huruf atau 1 kata)
   var LOADER_TEXT = '#1f5c4a';                // warna huruf (hijau brand)
   var MIN_VISIBLE_MS = 450;                   // garis minimal terlihat sekian ms
   var TIMEOUT_MS = 15000;                     // lewat ini, pakai navigasi biasa
@@ -38,6 +38,10 @@
       !window.history || !history.pushState) { return; }
   var main = document.getElementById(MAIN_ID);
   if (!main) { return; }
+
+  /* Ukuran font menyesuaikan panjang teks agar selalu muat di dalam cincin */
+  var LOADER_FONT = Math.round(Math.min(LOADER_SIZE * 0.36,
+    LOADER_SIZE * 0.66 / (String(LOADER_LETTER).length * 0.5)));
 
   /* ---------- Gaya garis progress ---------- */
   var style = document.createElement('style');
@@ -64,9 +68,10 @@
     '#nav-loader .nl-track{stroke:#fef3c7}' +
     '#nav-loader .nl-ring{stroke:' + BAR_COLOR + '}' +
     '#nav-loader b{position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;' +
-      'justify-content:center;font:700 ' + Math.round(LOADER_SIZE * 0.36) + 'px/1 Arial,sans-serif;' +
+      'justify-content:center;font:700 ' + LOADER_FONT + 'px/1 Arial,sans-serif;letter-spacing:-.02em;' +
       'color:' + LOADER_TEXT + ';animation:nav-loader-pulse 1.2s ease-in-out infinite}' +
-    '@keyframes nav-loader-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}' +
+    '#nav-loader b span{white-space:nowrap}' +
+    '@keyframes nav-loader-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}' +
     '@media (prefers-reduced-motion:reduce){#nav-progress>i,#nav-loader b{animation:none}}';
   document.head.appendChild(style);
 
@@ -87,8 +92,17 @@
     loader.setAttribute('aria-hidden', 'true');
     loader.innerHTML =
       '<svg viewBox="0 0 64 64"><circle class="nl-track" cx="32" cy="32" r="' + RING_R + '"/>' +
-      '<circle class="nl-ring" cx="32" cy="32" r="' + RING_R + '"/></svg><b>' + LOADER_LETTER + '</b>';
+      '<circle class="nl-ring" cx="32" cy="32" r="' + RING_R + '"/></svg><b><span>' + LOADER_LETTER + '</span></b>';
     document.body.appendChild(loader);
+    var label = loader.querySelector('b');
+    var span = label.querySelector('span');
+    var maxW = LOADER_SIZE * 0.6;                           // lebar teks maksimum di dalam cincin
+    var fs = LOADER_FONT;
+    label.style.fontSize = fs + 'px';
+    for (var n = 0; n < 12 && span.offsetWidth > maxW && fs > 8; n += 1) {
+      fs = Math.max(8, Math.floor(fs * maxW / span.offsetWidth));
+      label.style.fontSize = fs + 'px';
+    }
     ring = loader.querySelector('.nl-ring');
     ring.style.strokeDasharray = RING_C;
     ring.style.strokeDashoffset = RING_C;

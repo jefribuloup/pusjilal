@@ -22,7 +22,8 @@
   var MAIN_ID = 'konten';
   var BAR_HEIGHT = 9;                         // px, makin besar makin tebal
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
-  var BAR_LIGHT = '#fcd34d';                  // warna kilau
+  var BAR_LIGHT = '#f59e0b';                  // warna kilau
+  // var BAR_LIGHT = '#fcd34d';                  // warna kilau
   var MIN_VISIBLE_MS = 450;                   // garis minimal terlihat sekian ms
   var TIMEOUT_MS = 15000;                     // lewat ini, pakai navigasi biasa
   var SKIP_EXT = /\.(pdf|zip|rar|docx?|xlsx?|pptx?|csv|png|jpe?g|gif|webp|svg|ico|mp3|mp4)$/i;

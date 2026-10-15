@@ -1,19 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Halaman tidak ditemukan - {{ site.name }}{% endblock %}
+{% block title %}Halaman tidak ditemukan — {{ site.name }}{% endblock %}
 
 {% block content %}
-<section class="section">
-  <div class="container">
-    <h1>Halaman tidak ditemukan</h1>
-    <p class="muted">
-      Alamat yang Anda buka tidak ada atau sudah dipindahkan.
-      Periksa kembali penulisan alamatnya, atau mulai dari halaman berikut.
-    </p>
-    <p>
-      <a class="btn" href="{{ url_for('index') }}">Kembali ke beranda</a>
-      <a class="btn btn-outline" href="{{ url_for('berita') }}">Lihat berita</a>
-    </p>
+<section class="mx-auto flex max-w-3xl flex-col items-center px-4 py-16 text-center sm:py-24">
+  <p class="text-7xl font-bold tracking-tight text-brand-200 sm:text-8xl" aria-hidden="true">404</p>
+  <h1 class="mt-4 text-2xl font-bold text-brand-800 sm:text-3xl">Halaman tidak ditemukan</h1>
+  <p class="mt-3 max-w-md text-slate-600">
+    Alamat yang Anda buka tidak ada atau sudah dipindahkan.
+    Periksa kembali penulisan alamatnya, atau pilih salah satu halaman di bawah ini.
+  </p>
+
+  <div class="mt-8">
+    <a href="{{ url_for('index') }}"
+       class="inline-block rounded-md bg-brand-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-800">Kembali ke beranda</a>
   </div>
+
+  {% if nav %}
+  <nav class="mt-8 flex flex-wrap justify-center gap-2" aria-label="Halaman lain">
+    {% for label, endpoint in nav %}
+      {% if endpoint != 'index' %}
+      <a href="{{ url_for(endpoint) }}"
+         class="rounded-full border border-stone-200 bg-white px-4 py-1.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-700">{{ label }}</a>
+      {% endif %}
+    {% endfor %}
+  </nav>
+  {% endif %}
 </section>
 {% endblock %}

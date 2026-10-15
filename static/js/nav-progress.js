@@ -26,7 +26,7 @@
   // var BAR_LIGHT = '#fcd34d';                  // warna kilau
   var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
-  var LOADER_SIZE = 112;                      // px, ukuran lingkaran di tengah layar
+  var LOADER_SIZE = 125;                      // px, ukuran lingkaran di tengah layar
   var LOADER_LETTER = 'PUSJILAL';             // teks di tengah lingkaran (boleh 1 huruf atau 1 kata)
   var LOADER_TEXT = '#1f5c4a';                // warna huruf (hijau brand)
   var MIN_VISIBLE_MS = 450;                   // garis minimal terlihat sekian ms

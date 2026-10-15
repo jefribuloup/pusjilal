@@ -23,7 +23,8 @@
   var BAR_HEIGHT = 5;                         // px, makin besar makin tebal
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
   var BAR_LIGHT = '#f59e0b';                  // warna kilau
-  // var BAR_LIGHT = '#fcd34d';                  // warna kilau
+  var BAR_LIGHT = '#fcd34d';                  // warna kilau
+  var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
   var LOADER_SIZE = 84;                       // px, ukuran lingkaran di tengah layar
   var LOADER_LETTER = 'P';                    // huruf di tengah lingkaran
@@ -44,6 +45,7 @@
     '#nav-progress{position:fixed;left:0;right:0;top:0;height:' + BAR_HEIGHT + 'px;' +
       'z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s ease}' +
     '#nav-progress.on{opacity:1}' +
+    '#nav-progress.in-nav{position:absolute;top:auto;bottom:0;left:0;right:0}' +
     '#nav-progress>i{display:block;width:100%;height:100%;transform-origin:left center;' +
       'transform:scaleX(0);background-color:' + BAR_COLOR + ';' +
       'background-image:linear-gradient(90deg,' + BAR_COLOR + ',' + BAR_LIGHT + ',' + BAR_COLOR + ');' +
@@ -102,7 +104,32 @@
   }
   var navEl = findNav(document, main);
 
+  var navPatched = false;
+
+  /* Mobile: garis dipasang DI DALAM navbar (tepi bawah) agar selalu menempel,
+     tidak tertinggal saat scroll / toolbar browser HP berubah ukuran.
+     Desktop (atau navbar sudah tergulung keluar layar): garis fixed di bawah navbar. */
+  function attach() {
+    var mobile = window.matchMedia && window.matchMedia('(max-width:' + MOBILE_MAX + 'px)').matches;
+    var inNav = !!(mobile && navEl && navEl.getBoundingClientRect().bottom > 0);
+    if (inNav) {
+      if (window.getComputedStyle(navEl).position === 'static') {
+        navEl.style.position = 'relative';
+        navPatched = true;
+      }
+      if (wrap.parentNode !== navEl) { navEl.appendChild(wrap); }
+      wrap.style.top = '';
+      wrap.classList.add('in-nav');
+    } else {
+      if (wrap.parentNode !== document.body) { document.body.appendChild(wrap); }
+      if (navPatched) { navEl.style.position = ''; navPatched = false; }
+      wrap.classList.remove('in-nav');
+      place();
+    }
+  }
+
   function place() {
+    if (wrap.classList.contains('in-nav')) { return; }
     var top = 0;
     if (navEl) {
       var bottom = navEl.getBoundingClientRect().bottom;
@@ -140,7 +167,7 @@
     clearTimeout(safeT);
     active = true;
     startedAt = Date.now();
-    place();
+    attach();
     tr(null);
     setProgress(0);
     ui(true);

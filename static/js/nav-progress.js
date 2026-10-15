@@ -27,7 +27,7 @@
   var MOBILE_MAX = 1023;                      // px, layar <= ini memakai tombol menu (breakpoint lg Tailwind = 1024px)
   var CLOSE_MENU_ON_NAV = true;               // mobile: tutup dropdown navbar saat pindah halaman selesai
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
-  var LOADER_SIZE = 160;                      // px, ukuran lingkaran di tengah layar
+  var LOADER_SIZE = 93;                      // px, ukuran lingkaran di tengah layar
   var LOADER_LETTER = 'PUSJILAL';             // teks di tengah lingkaran (boleh 1 huruf atau 1 kata)
   var LOADER_TEXT_FIT = 0.7;                  // lebar teks = sekian x diameter lingkaran (maks. sekitar 0.74)
   var LOADER_TEXT = '#1f5c4a';                // warna huruf (hijau brand)

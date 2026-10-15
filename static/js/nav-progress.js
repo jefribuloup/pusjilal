@@ -27,7 +27,7 @@
   var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
   var LOADER_SIZE = 84;                       // px, ukuran lingkaran di tengah layar
-  var LOADER_LETTER = 'PUSJILAL';                    // huruf di tengah lingkaran
+  var LOADER_LETTER = 'P';                    // huruf di tengah lingkaran
   var LOADER_TEXT = '#1f5c4a';                // warna huruf (hijau brand)
   var MIN_VISIBLE_MS = 450;                   // garis minimal terlihat sekian ms
   var TIMEOUT_MS = 15000;                     // lewat ini, pakai navigasi biasa
@@ -45,7 +45,7 @@
     '#nav-progress{position:fixed;left:0;right:0;top:0;height:' + BAR_HEIGHT + 'px;' +
       'z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s ease}' +
     '#nav-progress.on{opacity:1}' +
-    '#nav-progress.in-nav{position:absolute;top:auto;bottom:0;left:0;right:0}' +
+    '#nav-progress.in-nav{position:absolute;left:0;right:0}' +
     '#nav-progress>i{display:block;width:100%;height:100%;transform-origin:left center;' +
       'transform:scaleX(0);background-color:' + BAR_COLOR + ';' +
       'background-image:linear-gradient(90deg,' + BAR_COLOR + ',' + BAR_LIGHT + ',' + BAR_COLOR + ');' +
@@ -106,6 +106,45 @@
 
   var navPatched = false;
 
+  /* Mobile: cari batas antara baris brand (atas) dan baris menu (bawah).
+     Hasil: posisi y (px, relatif ke tepi atas navbar) tempat garis diletakkan,
+     tepat di bawah nama brand dan di atas menu. null = tidak ada dua baris. */
+  function menuBoundary() {
+    var links = Array.prototype.filter.call(navEl.querySelectorAll('a[href]'), function (a) {
+      var r = a.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    });
+    if (links.length < 2) { return null; }
+    var first = links[0].getBoundingClientRect();           // brand = tautan pertama
+    var upper = [], below = [];
+    links.forEach(function (a) {
+      (a.getBoundingClientRect().top >= first.bottom - 2 ? below : upper).push(a);
+    });
+    if (!below.length) { return null; }
+    var brandBottom = Math.max.apply(null, upper.map(function (a) { return a.getBoundingClientRect().bottom; }));
+    var minTop = Math.min.apply(null, below.map(function (a) { return a.getBoundingClientRect().top; }));
+    var node = below[0].parentElement;
+    while (node && node !== navEl && !below.every(function (a) { return node.contains(a); })) {
+      node = node.parentElement;
+    }
+    var cTop = (node && node !== navEl) ? node.getBoundingClientRect().top : minTop;
+    var boundary = Math.min(Math.max(cTop, brandBottom), minTop);
+    var top = Math.max(boundary - BAR_HEIGHT, brandBottom);
+    var nr = navEl.getBoundingClientRect();
+    return top - (nr.top + navEl.clientTop);
+  }
+
+  function positionInNav() {
+    var y = menuBoundary();
+    if (y === null) {                                       // satu baris saja: tepi bawah navbar
+      wrap.style.top = 'auto';
+      wrap.style.bottom = '0';
+      return;
+    }
+    wrap.style.bottom = 'auto';
+    wrap.style.top = Math.max(0, Math.round(y)) + 'px';
+  }
+
   /* Mobile: garis dipasang DI DALAM navbar (tepi bawah) agar selalu menempel,
      tidak tertinggal saat scroll / toolbar browser HP berubah ukuran.
      Desktop (atau navbar sudah tergulung keluar layar): garis fixed di bawah navbar. */
@@ -118,12 +157,13 @@
         navPatched = true;
       }
       if (wrap.parentNode !== navEl) { navEl.appendChild(wrap); }
-      wrap.style.top = '';
       wrap.classList.add('in-nav');
+      positionInNav();
     } else {
       if (wrap.parentNode !== document.body) { document.body.appendChild(wrap); }
       if (navPatched) { navEl.style.position = ''; navPatched = false; }
       wrap.classList.remove('in-nav');
+      wrap.style.bottom = '';
       place();
     }
   }

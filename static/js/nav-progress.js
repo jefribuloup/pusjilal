@@ -23,11 +23,11 @@
   var BAR_HEIGHT = 5;                         // px, makin besar makin tebal
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
   var BAR_LIGHT = '#f59e0b';                  // warna kilau
-  // var BAR_LIGHT = '#fcd34d';                  // warna kilau
   var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
-  var LOADER_SIZE = 125;                      // px, ukuran lingkaran di tengah layar
+  var LOADER_SIZE = 160;                      // px, ukuran lingkaran di tengah layar
   var LOADER_LETTER = 'PUSJILAL';             // teks di tengah lingkaran (boleh 1 huruf atau 1 kata)
+  var LOADER_TEXT_FIT = 0.7;                  // lebar teks = sekian x diameter lingkaran (maks. sekitar 0.74)
   var LOADER_TEXT = '#1f5c4a';                // warna huruf (hijau brand)
   var MIN_VISIBLE_MS = 450;                   // garis minimal terlihat sekian ms
   var TIMEOUT_MS = 15000;                     // lewat ini, pakai navigasi biasa

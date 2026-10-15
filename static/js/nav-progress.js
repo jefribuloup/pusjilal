@@ -23,7 +23,7 @@
   var BAR_HEIGHT = 5;                         // px, makin besar makin tebal
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
   var BAR_LIGHT = '#f59e0b';                  // warna kilau
-  var BAR_LIGHT = '#fcd34d';                  // warna kilau
+  // var BAR_LIGHT = '#fcd34d';                  // warna kilau
   var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
   var LOADER_SIZE = 84;                       // px, ukuran lingkaran di tengah layar

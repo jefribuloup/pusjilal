@@ -20,7 +20,7 @@
 
   /* ---------- Pengaturan (silakan ubah) ---------- */
   var MAIN_ID = 'konten';
-  var BAR_HEIGHT = 3;                         // px, makin besar makin tebal
+  var BAR_HEIGHT = 4;                         // px, makin besar makin tebal
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
   var BAR_LIGHT = '#f59e0b';                  // warna kilau
   // var BAR_LIGHT = '#fcd34d';                  // warna kilau

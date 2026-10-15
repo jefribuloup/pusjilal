@@ -24,6 +24,7 @@
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
   var BAR_LIGHT = '#f59e0b';                  // warna kilau
   var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
+  var CLOSE_MENU_ON_NAV = true;               // mobile: tutup dropdown navbar saat pindah halaman selesai
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
   var LOADER_SIZE = 160;                      // px, ukuran lingkaran di tengah layar
   var LOADER_LETTER = 'PUSJILAL';             // teks di tengah lingkaran (boleh 1 huruf atau 1 kata)
@@ -40,8 +41,7 @@
   if (!main) { return; }
 
   /* Ukuran font menyesuaikan panjang teks agar selalu muat di dalam cincin */
-  var LOADER_FONT = Math.round(Math.min(LOADER_SIZE * 0.36,
-    LOADER_SIZE * 0.66 / (String(LOADER_LETTER).length * 0.5)));
+  var LOADER_FONT = Math.round(LOADER_SIZE * 0.2);
 
   /* ---------- Gaya garis progress ---------- */
   var style = document.createElement('style');
@@ -96,13 +96,12 @@
     document.body.appendChild(loader);
     var label = loader.querySelector('b');
     var span = label.querySelector('span');
-    var maxW = LOADER_SIZE * 0.6;                           // lebar teks maksimum di dalam cincin
-    var fs = LOADER_FONT;
+    // ukur lebar teks pada font 100px, lalu skalakan agar lebarnya = LOADER_TEXT_FIT x diameter
+    label.style.fontSize = '100px';
+    var w100 = span.offsetWidth || 100;
+    var fs = Math.floor(100 * LOADER_SIZE * LOADER_TEXT_FIT / w100);
+    fs = Math.max(8, Math.min(fs, Math.round(LOADER_SIZE * 0.4)));
     label.style.fontSize = fs + 'px';
-    for (var n = 0; n < 12 && span.offsetWidth > maxW && fs > 8; n += 1) {
-      fs = Math.max(8, Math.floor(fs * maxW / span.offsetWidth));
-      label.style.fontSize = fs + 'px';
-    }
     ring = loader.querySelector('.nl-ring');
     ring.style.strokeDasharray = RING_C;
     ring.style.strokeDashoffset = RING_C;
@@ -159,6 +158,58 @@
     wrap.style.top = Math.max(0, Math.round(y)) + 'px';
   }
 
+  /* Mobile: tutup dropdown navbar yang sedang terbuka (dipanggil saat progress selesai) */
+  function isShown(el) {
+    var r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  }
+
+  function menuOpenNow() {                                  // ada tautan menu yang benar-benar terlihat di bawah brand?
+    var links = Array.prototype.filter.call(navEl.querySelectorAll('a[href]'), isShown);
+    if (links.length < 2) { return false; }
+    var first = links[0].getBoundingClientRect();
+    return links.some(function (a) {
+      var r = a.getBoundingClientRect();
+      if (r.top < first.bottom - 2) { return false; }
+      var hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return !!hit && (hit === a || a.contains(hit));
+    });
+  }
+
+  function closeMobileMenu() {
+    if (!navEl || !window.matchMedia ||
+        !window.matchMedia('(max-width:' + MOBILE_MAX + 'px)').matches) { return; }
+    var acted = false;
+
+    // 1. tombol yang menandai menu terbuka (aria-expanded="true"): klik agar menutup
+    Array.prototype.forEach.call(navEl.querySelectorAll('[aria-expanded="true"]'), function (btn) {
+      btn.click();
+      acted = true;
+    });
+    // 2. <details open>
+    Array.prototype.forEach.call(navEl.querySelectorAll('details[open]'), function (d) {
+      d.removeAttribute('open');
+      acted = true;
+    });
+    // 3. checkbox yang tercentang (pola CSS peer-checked)
+    Array.prototype.forEach.call(navEl.querySelectorAll('input[type="checkbox"]:checked'), function (c) {
+      c.checked = false;
+      c.dispatchEvent(new Event('change', { bubbles: true }));
+      acted = true;
+    });
+    if (acted || !menuOpenNow()) { return; }
+
+    // 4. menu masih terlihat terbuka: cari tombol pembuka menu lalu klik sekali
+    var sel = '[aria-controls],[data-collapse-toggle],[data-menu-toggle],.menu-toggle,.hamburger,' +
+              'button[aria-label*="menu" i],button[aria-label*="nav" i]';
+    var toggle = Array.prototype.filter.call(navEl.querySelectorAll(sel), isShown)[0];
+    if (!toggle) {
+      var buttons = Array.prototype.filter.call(navEl.querySelectorAll('button'), isShown);
+      if (buttons.length === 1) { toggle = buttons[0]; }
+    }
+    if (toggle) { toggle.click(); }
+  }
+
   /* Mobile: garis dipasang DI DALAM navbar (tepi bawah) agar selalu menempel,
      tidak tertinggal saat scroll / toolbar browser HP berubah ukuran.
      Desktop (atau navbar sudah tergulung keluar layar): garis fixed di bawah navbar. */
@@ -198,6 +249,7 @@
 
   /* ---------- Animasi progress ---------- */
   var progress = 0, trickle = null, hideT = null, safeT = null, startedAt = 0, active = false;
+  var closeMenuOnFinish = false;
 
   function setProgress(p) {
     progress = p;
@@ -220,6 +272,7 @@
     clearTimeout(hideT);
     clearTimeout(safeT);
     active = true;
+    closeMenuOnFinish = false;
     startedAt = Date.now();
     attach();
     tr(null);
@@ -246,6 +299,11 @@
     hideT = setTimeout(function () {
       tr('.25s');
       setProgress(1);
+      if (closeMenuOnFinish) {
+        closeMenuOnFinish = false;
+        closeMobileMenu();
+        if (wrap.classList.contains('in-nav')) { positionInNav(); }
+      }
       hideT = setTimeout(function () {
         ui(false);
         hideT = setTimeout(function () {
@@ -258,6 +316,7 @@
 
   function reset() {
     active = false;
+    closeMenuOnFinish = false;
     clearInterval(trickle);
     clearTimeout(hideT);
     clearTimeout(safeT);
@@ -390,6 +449,7 @@
           window.scrollTo(0, y || 0);
         }
         lastKey = finalUrl.pathname + finalUrl.search;
+        closeMenuOnFinish = CLOSE_MENU_ON_NAV;
         finish();
         document.dispatchEvent(new CustomEvent('pjax:load', { detail: { url: finalUrl.href } }));
       });

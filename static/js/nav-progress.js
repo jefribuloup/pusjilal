@@ -20,10 +20,14 @@
 
   /* ---------- Pengaturan (silakan ubah) ---------- */
   var MAIN_ID = 'konten';
-  var BAR_HEIGHT = 4;                         // px, makin besar makin tebal
+  var BAR_HEIGHT = 3;                         // px, makin besar makin tebal
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
   var BAR_LIGHT = '#f59e0b';                  // warna kilau
   // var BAR_LIGHT = '#fcd34d';                  // warna kilau
+  var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
+  var LOADER_SIZE = 84;                       // px, ukuran lingkaran di tengah layar
+  var LOADER_LETTER = 'P';                    // huruf di tengah lingkaran
+  var LOADER_TEXT = '#1f5c4a';                // warna huruf (hijau brand)
   var MIN_VISIBLE_MS = 450;                   // garis minimal terlihat sekian ms
   var TIMEOUT_MS = 15000;                     // lewat ini, pakai navigasi biasa
   var SKIP_EXT = /\.(pdf|zip|rar|docx?|xlsx?|pptx?|csv|png|jpe?g|gif|webp|svg|ico|mp3|mp4)$/i;
@@ -47,7 +51,21 @@
       'animation:nav-progress-shimmer 1s linear infinite}' +
     '@keyframes nav-progress-shimmer{from{background-position:0 0}to{background-position:200px 0}}' +
     'main[aria-busy="true"]{opacity:.6;transition:opacity .2s ease}' +
-    '@media (prefers-reduced-motion:reduce){#nav-progress>i{animation:none}}';
+    '#nav-loader{position:fixed;left:50%;top:50%;z-index:9998;width:' + LOADER_SIZE + 'px;' +
+      'height:' + LOADER_SIZE + 'px;margin:-' + (LOADER_SIZE / 2) + 'px 0 0 -' + (LOADER_SIZE / 2) + 'px;' +
+      'border-radius:50%;background:#fff;box-shadow:0 8px 28px rgba(18,56,45,.22);' +
+      'pointer-events:none;opacity:0;transform:scale(.85);' +
+      'transition:opacity .25s ease,transform .25s ease}' +
+    '#nav-loader.on{opacity:1;transform:scale(1)}' +
+    '#nav-loader svg{position:absolute;left:0;top:0;width:100%;height:100%;transform:rotate(-90deg)}' +
+    '#nav-loader circle{fill:none;stroke-width:5;stroke-linecap:round}' +
+    '#nav-loader .nl-track{stroke:#fef3c7}' +
+    '#nav-loader .nl-ring{stroke:' + BAR_COLOR + '}' +
+    '#nav-loader b{position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;' +
+      'justify-content:center;font:700 ' + Math.round(LOADER_SIZE * 0.36) + 'px/1 Arial,sans-serif;' +
+      'color:' + LOADER_TEXT + ';animation:nav-loader-pulse 1.2s ease-in-out infinite}' +
+    '@keyframes nav-loader-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}' +
+    '@media (prefers-reduced-motion:reduce){#nav-progress>i,#nav-loader b{animation:none}}';
   document.head.appendChild(style);
 
   var wrap = document.createElement('div');
@@ -56,6 +74,23 @@
   var bar = document.createElement('i');
   wrap.appendChild(bar);
   document.body.appendChild(wrap);
+
+  /* ---------- Animasi di tengah layar (mengikuti progress) ---------- */
+  var RING_R = 27;
+  var RING_C = 2 * Math.PI * RING_R;
+  var loader = null, ring = null;
+  if (SHOW_LOADER) {
+    loader = document.createElement('div');
+    loader.id = 'nav-loader';
+    loader.setAttribute('aria-hidden', 'true');
+    loader.innerHTML =
+      '<svg viewBox="0 0 64 64"><circle class="nl-track" cx="32" cy="32" r="' + RING_R + '"/>' +
+      '<circle class="nl-ring" cx="32" cy="32" r="' + RING_R + '"/></svg><b>' + LOADER_LETTER + '</b>';
+    document.body.appendChild(loader);
+    ring = loader.querySelector('.nl-ring');
+    ring.style.strokeDasharray = RING_C;
+    ring.style.strokeDashoffset = RING_C;
+  }
 
   /* ---------- Navbar: tempat garis menempel ---------- */
   function findNav(root, mainEl) {
@@ -86,6 +121,17 @@
   function setProgress(p) {
     progress = p;
     bar.style.transform = 'scaleX(' + p + ')';
+    if (ring) { ring.style.strokeDashoffset = RING_C * (1 - p); }
+  }
+
+  function tr(d) {                                         // transisi garis + lingkaran serempak
+    bar.style.transition = d ? 'transform ' + d + ' ease-out' : 'none';
+    if (ring) { ring.style.transition = d ? 'stroke-dashoffset ' + d + ' ease-out' : 'none'; }
+  }
+
+  function ui(on) {
+    wrap.classList[on ? 'add' : 'remove']('on');
+    if (loader) { loader.classList[on ? 'add' : 'remove']('on'); }
   }
 
   function start() {
@@ -95,11 +141,11 @@
     active = true;
     startedAt = Date.now();
     place();
-    bar.style.transition = 'none';
+    tr(null);
     setProgress(0);
-    wrap.classList.add('on');
+    ui(true);
     void bar.offsetWidth;                                  // paksa reflow
-    bar.style.transition = 'transform .35s ease-out';
+    tr('.35s');
     setProgress(0.12);
     main.setAttribute('aria-busy', 'true');
     trickle = setInterval(function () {
@@ -117,12 +163,12 @@
     main.removeAttribute('aria-busy');
     var wait = Math.max(0, MIN_VISIBLE_MS - (Date.now() - startedAt));
     hideT = setTimeout(function () {
-      bar.style.transition = 'transform .25s ease-out';
+      tr('.25s');
       setProgress(1);
       hideT = setTimeout(function () {
-        wrap.classList.remove('on');
+        ui(false);
         hideT = setTimeout(function () {
-          bar.style.transition = 'none';
+          tr(null);
           setProgress(0);
         }, 320);
       }, 280);
@@ -135,8 +181,8 @@
     clearTimeout(hideT);
     clearTimeout(safeT);
     main.removeAttribute('aria-busy');
-    wrap.classList.remove('on');
-    bar.style.transition = 'none';
+    ui(false);
+    tr(null);
     setProgress(0);
   }
 

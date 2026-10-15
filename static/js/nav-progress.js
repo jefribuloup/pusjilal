@@ -2,6 +2,7 @@
  * nav-progress.js - Pusjilal
  *
  * Pindah halaman tanpa reload penuh + garis progress di bawah navbar.
+ * Ditulis untuk templates/base.html + templates/components/navbar.html Pusjilal.
  * Hanya <main id="konten"> yang diganti; navbar dan footer tetap di tempat.
  *
  * Jatuh ke navigasi biasa (aman) kalau:
@@ -23,7 +24,7 @@
   var BAR_HEIGHT = 5;                         // px, makin besar makin tebal
   var BAR_COLOR = '#f59e0b';                  // warna dasar garis
   var BAR_LIGHT = '#f59e0b';                  // warna kilau
-  var MOBILE_MAX = 767;                       // px, lebar layar maksimum yang dianggap mobile
+  var MOBILE_MAX = 1023;                      // px, layar <= ini memakai tombol menu (breakpoint lg Tailwind = 1024px)
   var CLOSE_MENU_ON_NAV = true;               // mobile: tutup dropdown navbar saat pindah halaman selesai
   var SHOW_LOADER = true;                     // animasi di tengah layar (false = matikan)
   var LOADER_SIZE = 160;                      // px, ukuran lingkaran di tengah layar
@@ -117,39 +118,31 @@
   }
   var navEl = findNav(document, main);
 
-  var navPatched = false;
+  /* Struktur navbar Pusjilal (templates/components/navbar.html):
+       <header sticky>
+         <div>  baris atas: brand + tombol #menu-btn  </div>
+         <nav id="menu-mobile">  dropdown (class "hidden" saat tertutup)  </nav>
+       </header>
+     Di bawah breakpoint lg (1024px) menu tampil lewat tombol #menu-btn + dropdown. */
+  var menuBtn = document.getElementById('menu-btn');
 
-  /* Mobile: cari batas antara baris brand (atas) dan baris menu (bawah).
-     Hasil: posisi y (px, relatif ke tepi atas navbar) tempat garis diletakkan,
-     tepat di bawah nama brand dan di atas menu. null = tidak ada dua baris. */
-  function menuBoundary() {
-    var links = Array.prototype.filter.call(navEl.querySelectorAll('a[href]'), function (a) {
-      var r = a.getBoundingClientRect();
-      return r.width > 0 && r.height > 0;
-    });
-    if (links.length < 2) { return null; }
-    var first = links[0].getBoundingClientRect();           // brand = tautan pertama
-    var upper = [], below = [];
-    links.forEach(function (a) {
-      (a.getBoundingClientRect().top >= first.bottom - 2 ? below : upper).push(a);
-    });
-    if (!below.length) { return null; }
-    var brandBottom = Math.max.apply(null, upper.map(function (a) { return a.getBoundingClientRect().bottom; }));
-    var minTop = Math.min.apply(null, below.map(function (a) { return a.getBoundingClientRect().top; }));
-    var node = below[0].parentElement;
-    while (node && node !== navEl && !below.every(function (a) { return node.contains(a); })) {
-      node = node.parentElement;
-    }
-    var cTop = (node && node !== navEl) ? node.getBoundingClientRect().top : minTop;
-    var boundary = Math.min(Math.max(cTop, brandBottom), minTop);
-    var top = Math.max(boundary - BAR_HEIGHT, brandBottom);
+  function isMobile() {
+    return !!(window.matchMedia && window.matchMedia('(max-width:' + MOBILE_MAX + 'px)').matches);
+  }
+
+  /* Mobile: posisi y garis (px, relatif ke tepi atas header) = tepi bawah baris brand,
+     jadi selalu tepat di bawah nama brand dan di atas dropdown, baik terbuka maupun tertutup. */
+  function rowBottomY() {
+    var row = navEl.querySelector(':scope > div');
+    if (!row) { return null; }
     var nr = navEl.getBoundingClientRect();
-    return top - (nr.top + navEl.clientTop);
+    var rr = row.getBoundingClientRect();
+    return rr.bottom - BAR_HEIGHT - (nr.top + navEl.clientTop);
   }
 
   function positionInNav() {
-    var y = menuBoundary();
-    if (y === null) {                                       // satu baris saja: tepi bawah navbar
+    var y = rowBottomY();
+    if (y === null) {                                       // struktur tak dikenali: tepi bawah header
       wrap.style.top = 'auto';
       wrap.style.bottom = '0';
       return;
@@ -158,75 +151,21 @@
     wrap.style.top = Math.max(0, Math.round(y)) + 'px';
   }
 
-  /* Mobile: tutup dropdown navbar yang sedang terbuka (dipanggil saat progress selesai) */
-  function isShown(el) {
-    var r = el.getBoundingClientRect();
-    return r.width > 0 && r.height > 0;
-  }
-
-  function menuOpenNow() {                                  // ada tautan menu yang benar-benar terlihat di bawah brand?
-    var links = Array.prototype.filter.call(navEl.querySelectorAll('a[href]'), isShown);
-    if (links.length < 2) { return false; }
-    var first = links[0].getBoundingClientRect();
-    return links.some(function (a) {
-      var r = a.getBoundingClientRect();
-      if (r.top < first.bottom - 2) { return false; }
-      var hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-      return !!hit && (hit === a || a.contains(hit));
-    });
-  }
-
+  /* Mobile: tutup dropdown yang terbuka (dipanggil saat progress mencapai 100%) */
   function closeMobileMenu() {
-    if (!navEl || !window.matchMedia ||
-        !window.matchMedia('(max-width:' + MOBILE_MAX + 'px)').matches) { return; }
-    var acted = false;
-
-    // 1. tombol yang menandai menu terbuka (aria-expanded="true"): klik agar menutup
-    Array.prototype.forEach.call(navEl.querySelectorAll('[aria-expanded="true"]'), function (btn) {
-      btn.click();
-      acted = true;
-    });
-    // 2. <details open>
-    Array.prototype.forEach.call(navEl.querySelectorAll('details[open]'), function (d) {
-      d.removeAttribute('open');
-      acted = true;
-    });
-    // 3. checkbox yang tercentang (pola CSS peer-checked)
-    Array.prototype.forEach.call(navEl.querySelectorAll('input[type="checkbox"]:checked'), function (c) {
-      c.checked = false;
-      c.dispatchEvent(new Event('change', { bubbles: true }));
-      acted = true;
-    });
-    if (acted || !menuOpenNow()) { return; }
-
-    // 4. menu masih terlihat terbuka: cari tombol pembuka menu lalu klik sekali
-    var sel = '[aria-controls],[data-collapse-toggle],[data-menu-toggle],.menu-toggle,.hamburger,' +
-              'button[aria-label*="menu" i],button[aria-label*="nav" i]';
-    var toggle = Array.prototype.filter.call(navEl.querySelectorAll(sel), isShown)[0];
-    if (!toggle) {
-      var buttons = Array.prototype.filter.call(navEl.querySelectorAll('button'), isShown);
-      if (buttons.length === 1) { toggle = buttons[0]; }
-    }
-    if (toggle) { toggle.click(); }
+    if (menuBtn && menuBtn.getAttribute('aria-expanded') === 'true') { menuBtn.click(); }
   }
 
-  /* Mobile: garis dipasang DI DALAM navbar (tepi bawah) agar selalu menempel,
-     tidak tertinggal saat scroll / toolbar browser HP berubah ukuran.
-     Desktop (atau navbar sudah tergulung keluar layar): garis fixed di bawah navbar. */
+  /* Mobile: garis dipasang DI DALAM header (anak langsung) supaya menempel pada navbar.
+     Desktop: garis fixed tepat di bawah header. */
   function attach() {
-    var mobile = window.matchMedia && window.matchMedia('(max-width:' + MOBILE_MAX + 'px)').matches;
-    var inNav = !!(mobile && navEl && navEl.getBoundingClientRect().bottom > 0);
+    var inNav = !!(isMobile() && navEl && navEl.getBoundingClientRect().bottom > 0);
     if (inNav) {
-      if (window.getComputedStyle(navEl).position === 'static') {
-        navEl.style.position = 'relative';
-        navPatched = true;
-      }
       if (wrap.parentNode !== navEl) { navEl.appendChild(wrap); }
       wrap.classList.add('in-nav');
       positionInNav();
     } else {
       if (wrap.parentNode !== document.body) { document.body.appendChild(wrap); }
-      if (navPatched) { navEl.style.position = ''; navPatched = false; }
       wrap.classList.remove('in-nav');
       wrap.style.bottom = '';
       place();
